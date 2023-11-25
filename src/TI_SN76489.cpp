@@ -14,17 +14,6 @@ TI_SN76489::TI_SN76489(byte _CLOCK,
                        byte _D7,
                        byte _NOT_WE)
 {
-    /*
-    P0 = _D0;
-    P1 = _D1;
-    P2 = _D2;
-    P3 = _D3;
-    P4 = _D4;
-    P5 = _D5;
-    P6 = _D6;
-    P7 = _D7;
-    */
-
     PIN_OPS[0] = _D0;
     PIN_OPS[1] = _D1;
     PIN_OPS[2] = _D2;
@@ -40,17 +29,6 @@ TI_SN76489::TI_SN76489(byte _CLOCK,
 
 void TI_SN76489::begin()
 {
-    /*
-    pinMode(P0, OUTPUT);
-    pinMode(P1, OUTPUT);
-    pinMode(P2, OUTPUT);
-    pinMode(P3, OUTPUT);
-    pinMode(P4, OUTPUT);
-    pinMode(P5, OUTPUT);
-    pinMode(P6, OUTPUT);
-    pinMode(P7, OUTPUT);
-    */
-
     for (int i = 0; i < N_PIN_OPS; i++)
         pinMode(PIN_OPS[i], OUTPUT);
 
@@ -78,16 +56,25 @@ void TI_SN76489::frequency(byte voice, uint16_t freq) {
     byte b1, b2;
     uint16_t n = uint16_t(4000000 / (32 * freq));
 
-    b1 = 0x10000000 || (voice * 2) << 4 || (n & 0x1111);
-    b2 = (n & 1111110000) >> 4;
+    b1 = 0x10000000 | get_reg(voice) | (n & 0x1111);
+    b2 = (n & 1111110000) >> 4 ;
 
     send(b1);
     send(b2);
 }
 
+void TI_SN76489::attenuation(byte voice, byte atten) {
+    byte b1;
+
+    b1 = 0x10000000 | get_reg(voice) + 16 | 0x1111 & atten;
+
+    send(b1);    
+}
+
 void TI_SN76489::send(byte value) {
 
-    for (int i = FROM_PIN; i >= 0; i--) 
+    //for (int i = FROM_PIN; i >= 0; i--)
+    while (i-- >= 0) 
         digitalWrite(BITS_PIN[i], (value >> i) & 1);    
 
     // needed?

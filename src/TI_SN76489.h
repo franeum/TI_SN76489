@@ -19,13 +19,14 @@ public:
 
     void begin();
     void frequency(byte voice, uint16_t freq);
-    void attenuation();
+    void attenuation(byte voice, byte atten);
 
 private:
     // byte P0, P1, P2, P3, P4, P5, P6, P7;
     byte PIN_OPS[8];
     byte NOTWE;
     byte CLOCK;
+    inline byte get_reg(byte voice){return (voice * 2) << 4};
     void set_clock();
     void send(byte value);
 };
