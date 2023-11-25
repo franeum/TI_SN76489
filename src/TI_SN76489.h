@@ -26,7 +26,7 @@ private:
     byte PIN_OPS[8];
     byte NOTWE;
     byte CLOCK;
-    inline byte get_reg(byte voice){return (voice * 2) << 4};
+    inline byte get_reg(byte voice) { return (voice * 2) << 4; }
     void set_clock();
     void send(byte value);
 };

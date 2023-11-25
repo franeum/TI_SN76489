@@ -13,5 +13,5 @@ TI_SN76489	KEYWORD1
 #######################################
 
 begin	KEYWORD2
-frequency   KEYWORD2
-attenuation KEYWORD2
+frequency	KEYWORD2
+attenuation	KEYWORD2

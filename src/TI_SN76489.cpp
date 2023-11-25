@@ -40,7 +40,7 @@ void TI_SN76489::begin()
 
 void TI_SN76489::set_clock()
 {
-#if defined(__AVR_ATmega328__)
+#ifndef __AVR_ATmega328__
     TCNT1 = 0;
     TCCR1B = 0x00001001;
     TCCR1A = 0x01000000;
@@ -49,33 +49,35 @@ void TI_SN76489::set_clock()
     delay(1000); // ?
 #else
 #error "Currently this library only supports the ATmega328. Stay tuned for update "
-#elif
+#endif
 }
 
-void TI_SN76489::frequency(byte voice, uint16_t freq) {
+void TI_SN76489::frequency(byte voice, uint16_t freq)
+{
     byte b1, b2;
     uint16_t n = uint16_t(4000000 / (32 * freq));
 
     b1 = 0x10000000 | get_reg(voice) | (n & 0x1111);
-    b2 = (n & 1111110000) >> 4 ;
+    b2 = (n & 1111110000) >> 4;
 
     send(b1);
     send(b2);
 }
 
-void TI_SN76489::attenuation(byte voice, byte atten) {
+void TI_SN76489::attenuation(byte voice, byte atten)
+{
     byte b1;
 
     b1 = 0x10000000 | get_reg(voice) + 16 | 0x1111 & atten;
 
-    send(b1);    
+    send(b1);
 }
 
-void TI_SN76489::send(byte value) {
+void TI_SN76489::send(byte value)
+{
 
-    //for (int i = FROM_PIN; i >= 0; i--)
-    while (i-- >= 0) 
-        digitalWrite(BITS_PIN[i], (value >> i) & 1);    
+    for (int i = FROM_PIN; i >= 0; i--)
+        digitalWrite(PIN_OPS[i], (value >> i) & 1);
 
     // needed?
     digitalWrite(NOTWE, LOW);
