@@ -17,15 +17,17 @@ public:
                byte _D7,
                byte _NOT_WE);
 
-    begin();
-    frequency();
-    attenuation();
+    void begin();
+    void frequency(byte voice, uint16_t freq);
+    void attenuation();
 
 private:
-    byte P0, P1, P2, P3, P4, P5, P6, P7;
+    // byte P0, P1, P2, P3, P4, P5, P6, P7;
+    byte PIN_OPS[8];
     byte NOTWE;
     byte CLOCK;
-    set_clock();
+    void set_clock();
+    void send(byte value);
 };
 
 #endif
