@@ -1,62 +1,53 @@
-#include "MicroMidiPot.h"
+#include "TI_SN76489.h"
 
-int MicroMidiPot::_debug = 1;
-
-void MicroMidiPot::begin(int pin, byte channel, byte controller, String identifier)
+TI_SN76489::TI_SN76489(byte _CLOCK,
+                       byte _D0,
+                       byte _D1,
+                       byte _D2,
+                       byte _D3,
+                       byte _D4,
+                       byte _D5,
+                       byte _D6,
+                       byte _D7,
+                       byte _NOT_WE)
 {
-    _channel = check_channel(channel);
-    _controller = controller;
-
-    if (_debug)
-    {
-        _id = "[" + identifier + "] " + "(channel: " +
-              String(_channel + 1) + ", n_controller: " +
-              String(_controller) + ")";
-    }
-
-    pot = new ResponsiveAnalogRead(pin, true);
+    P0 = _D0;
+    P1 = _D1;
+    P2 = _D2;
+    P3 = _D3;
+    P4 = _D4;
+    P5 = _D5;
+    P6 = _D6;
+    P7 = _D7;
+    NOTWE = _NOT_WE;
+    CLOCK = _CLOCK;
 }
 
-void MicroMidiPot::update()
+void TI_SN76489::begin()
 {
-    pot->update();
+    pinMode(P0, OUTPUT);
+    pinMode(P1, OUTPUT);
+    pinMode(P2, OUTPUT);
+    pinMode(P3, OUTPUT);
+    pinMode(P4, OUTPUT);
+    pinMode(P5, OUTPUT);
+    pinMode(P6, OUTPUT);
+    pinMode(P7, OUTPUT);
+    pinMode(NOTWE, INPUT);
 
-    if (pot->hasChanged())
-    {
-        int value = pot->getValue();
-        int current_value = this->parseValue(value);
-
-        if (reverse)
-            current_value = map(current_value, MIDICTL_MIN, MIDICTL_MAX, MIDICTL_MAX, MIDICTL_MIN);
-
-        if (previous_value != current_value)
-        {
-            if (_debug)
-            {
-                Serial.print(_id);
-                Serial.print("\tvalue: ");
-                Serial.println(current_value);
-            }
-
-            this->send(current_value);
-            previous_value = current_value;
-        }
-    }
+    set_clock();
 }
 
-int MicroMidiPot::parseValue(int v)
+void TI_SN76489::set_clock()
 {
-    int parsed = constrain(v, BOUND_MIN, BOUND_MAX) - BOUND_MIN;
-    parsed = map(parsed, 0, BOUND_MAX - BOUND_MIN, MIDICTL_MIN, MIDICTL_MAX);
-    return parsed;
-}
-
-void MicroMidiPot::send(int value)
-{
-    control_change(_channel, _controller, value);
-}
-
-void MicroMidiPot::set_debug(byte value)
-{
-    _debug = value;
+#if defined(__AVR_ATmega328__)
+    TCNT1 = 0;
+    TCCR1B = 0x00001001;
+    TCCR1A = 0x01000000;
+    OCR1A = 1; // CLK frequency = 4 MHz
+    pinMode(CLOCK, OUTPUT);
+    delay(1000); // ?
+#else
+#error "Currently this library only supports the ATmega328. Stay tuned for update "
+#elif
 }

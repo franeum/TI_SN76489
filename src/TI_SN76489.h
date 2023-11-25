@@ -6,29 +6,26 @@
 class TI_SN76489
 {
 public:
-    TI_SN76489(){};
-    TI_SN76489(int pin, byte channel, byte controller, String identifier = "POT")
-    {
-        begin(pin, channel, controller, identifier);
-    };
+    TI_SN76489(byte CLOCK,
+               byte _D0,
+               byte _D1,
+               byte _D2,
+               byte _D3,
+               byte _D4,
+               byte _D5,
+               byte _D6,
+               byte _D7,
+               byte _NOT_WE);
 
-    static void set_debug(byte value);
-    void begin(int pin, byte channel, byte controller, String identifier = "POT");
-    void update();
-    inline void set_reverse() { reverse = true; };
-    inline void set_forward() { reverse = false; };
+    begin();
+    frequency();
+    attenuation();
 
 private:
-    static int _debug;
-    bool reverse = false;
-    int pin;
-    ResponsiveAnalogRead *pot;
-    int previous_value;
-    byte _channel;
-    byte _controller;
-    void send(int value);
-    int parseValue(int v);
-    String _id;
+    byte P0, P1, P2, P3, P4, P5, P6, P7;
+    byte NOTWE;
+    byte CLOCK;
+    set_clock();
 };
 
 #endif
