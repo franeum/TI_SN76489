@@ -6,12 +6,10 @@
 # Datatypes	(KEYWORD1)
 #######################################
 
-MicroMidiPot	KEYWORD1
+TI_SN76489  KEYWORD1
 
 #######################################
 # Methods and Functions (KEYWORD2)
 #######################################
 
-update	KEYWORD2
-begin	KEYWORD2
-set_debug	KEYWORD2
+
