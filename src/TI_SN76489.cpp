@@ -44,9 +44,19 @@ void TI_SN76489::set_clock()
     TCNT1 = 0;
     TCCR1B = 0x00001001;
     TCCR1A = 0x01000000;
-    OCR1A = 1; // CLK frequency = 4 MHz
-    pinMode(CLOCK, OUTPUT);
-    delay(1000); // ?
+    OCR1A = 1;              // CLK frequency = 4 MHz
+    pinMode(CLOCK, OUTPUT); // or DDRB = 1 << DDB5;
+    delay(1000);            // ?
+
+    /*
+    __AVR_ATmega32U4__
+    DDRB = 1 << DDB5; // set PB5 to output
+    TCCR1B = 0x00001001;
+    TCCR1A = 0x01000000;
+    TIMSK1 = 0;
+    TCNT1 = 0;
+    OCR1A = 1;
+    */
 #else
 #error "Currently this library only supports the ATmega328. Stay tuned for update "
 #endif
