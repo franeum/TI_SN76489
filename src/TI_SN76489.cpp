@@ -40,26 +40,25 @@ void TI_SN76489::begin()
 
 void TI_SN76489::set_clock()
 {
-#ifndef __AVR_ATmega328__
+#if defined(__AVR_ATmega328__)
+    DDRB = 1 << DDB1;
     TCNT1 = 0;
     TCCR1B = 0x00001001;
     TCCR1A = 0x01000000;
-    OCR1A = 1;              // CLK frequency = 4 MHz
-    pinMode(CLOCK, OUTPUT); // or DDRB = 1 << DDB5;
-    delay(1000);            // ?
+    OCR1A = 1; // CLK frequency = 1: 4MHz, 3: 2MHz, 7: 1MHz
 
-    /*
-    __AVR_ATmega32U4__
+#elif defined(__AVR_ATmega32U4__)
     DDRB = 1 << DDB5; // set PB5 to output
     TCCR1B = 0x00001001;
     TCCR1A = 0x01000000;
     TIMSK1 = 0;
     TCNT1 = 0;
-    OCR1A = 1;
-    */
+    OCR1A = 1; // CLK frequency = 1: 4MHz, 3: 2MHz, 7: 1MHz
 #else
-#error "Currently this library only supports the ATmega328. Stay tuned for update "
+#error "Currently this library only supports the ATmega328 or ATmega32u4 Stay tuned for update "
 #endif
+
+    delay(1000);
 }
 
 void TI_SN76489::frequency(byte voice, uint16_t freq)
