@@ -3,30 +3,40 @@
 
 #include <Arduino.h>
 
+typedef enum
+{
+    _4MHz = 1,
+    _2MHz = 3,
+    _1MHz = 7
+} ClockFrequency;
+
 class TI_SN76489
 {
 public:
-    TI_SN76489(byte CLOCK,
-               byte _D0,
-               byte _D1,
-               byte _D2,
-               byte _D3,
-               byte _D4,
-               byte _D5,
-               byte _D6,
-               byte _D7,
-               byte _NOT_WE);
+    TI_SN76489(uint8_t _D0,
+               uint8_t _D1,
+               uint8_t _D2,
+               uint8_t _D3,
+               uint8_t _D4,
+               uint8_t _D5,
+               uint8_t _D6,
+               uint8_t _D7,
+               uint8_t _NOT_WE,
+               uint8_t _CLOCK_PIN,
+               ClockFrequency _FREQUENCY = _4MHz);
 
     void begin();
-    void frequency(byte voice, uint16_t freq);
-    void attenuation(byte voice, byte atten);
+    void frequency(uint8_t voice, uint16_t freq);
+    void attenuation(uint8_t voice, uint8_t atten);
 
 private:
-    // byte P0, P1, P2, P3, P4, P5, P6, P7;
-    byte PIN_OPS[8];
-    byte NOTWE;
-    byte CLOCK;
-    inline byte get_reg(byte voice) { return (voice * 2) << 4; }
+    // uint8_t P0, P1, P2, P3, P4, P5, P6, P7;
+    uint8_t PIN_OPS[8];
+    uint8_t NOTWE;
+    uint8_t CLOCK;
+    float clock_frequency;
+    ClockFrequency FREQUENCY;
+    inline uint8_t get_reg(uint8_t voice) { return (voice * 2) << 4; }
     void set_clock();
     void send(byte value);
 };
