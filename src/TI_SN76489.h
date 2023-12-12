@@ -26,7 +26,7 @@ public:
                ClockFrequency _FREQUENCY = _4MHz);
 
     void begin();
-    void frequency(uint8_t voice, uint16_t freq);
+    void frequency(uint8_t voice, float freq);
     void attenuation(uint8_t voice, uint8_t atten);
 
 private:

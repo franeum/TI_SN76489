@@ -80,11 +80,12 @@ void TI_SN76489::set_clock()
     delay(1000);
 }
 
-void TI_SN76489::frequency(uint8_t voice, uint16_t freq)
+void TI_SN76489::frequency(uint8_t voice, float freq)
 {
-    byte b1, b2, t1;
-    uint32_t n = clock_frequency / (32.0 * freq);
-    // uint32_t n = clock_frequency / (32.0 * freq);
+    byte b1;
+    byte b2 = NULL;
+    uint16_t n = clock_frequency / (32.0 * freq);
+
     Serial.print("clock:\t");
     Serial.println(clock_frequency);
 
@@ -94,19 +95,8 @@ void TI_SN76489::frequency(uint8_t voice, uint16_t freq)
     Serial.print("factor:\t");
     Serial.println(n);
 
-    // b1 = 0b10000000 | get_reg(voice) | (n & 0x1111);
-    // b2 = (n & 0b1111110000) >> 4;
-
-    t1 = (uint8_t)(n >> 6);
-
-    // b1 = 0b10000000 | 3 << (t1 & 1) | 1 << (t1 & 2) | (t1 & 4) >> 1 | t1 & 8 >> 3;
-    // b2 = (n & 1) << 5 | (n & 2) << 3 | (n & 4) << 1 | (n & 8) >> 1 | (n & 16) >> 3 | (n & 32) >> 5;
-
-    // b1 = 0b10000000 | get_reg(voice) | (n & 0x1111);
-    // b2 = (n >> 4) & 0b111111;
-
-    b1 = 128 + 8 * ((n & 0b0000000000001000) ? 1 : 0) + 4 * ((n & 0b0000000000000100) ? 1 : 0) + 2 * ((n & 0b0000000000000010) ? 1 : 0) + 1 * ((n & 0b0000000000000001) ? 1 : 0);
-    b2 = 32 * ((n & 0b0000001000000000) ? 1 : 0) + 16 * ((n & 0b0000000100000000) ? 1 : 0) + 8 * ((n & 0b0000000010000000) ? 1 : 0) + 4 * ((n & 0b0000000001000000) ? 1 : 0) + 2 * ((n & 0b0000000000100000) ? 1 : 0) + 1 * ((n & 0b0000000000010000) ? 1 : 0);
+    b1 = 0b10000000 | get_reg(voice) | (n & 0b00001111);
+    b2 = (n >> 4) & 0b00111111;
 
     Serial.print("b1:\t");
     Serial.println(b1);
@@ -123,16 +113,16 @@ void TI_SN76489::attenuation(uint8_t voice, uint8_t atten)
 
     b1 = 0b10000000 | get_reg(voice) + 16 | 0b1111 & atten;
 
-    send(144);
+    send(b1);
 }
 
 void TI_SN76489::send(byte value)
 {
 
     /*
-    for (int i = FROM_PIN; i >= 0; i--)
-        digitalWrite(PIN_OPS[i], (value >> i) & 1);
-    */
+        for (int i = FROM_PIN; i >= 0; i--)
+            digitalWrite(PIN_OPS[i], (value >> i) & 1);
+            */
 
     /*
         digitalWrite(2, value & 128);

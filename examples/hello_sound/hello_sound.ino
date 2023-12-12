@@ -7,19 +7,22 @@ void setup()
   Serial.begin(115200);
   sn.begin();
   sn.attenuation(0, 0);
+  sn.attenuation(1, 15);
+  sn.attenuation(2, 15);
+  sn.attenuation(3, 15);
   sn.frequency(0, 440);
 }
 
 void loop()
 {
   // put your main code here, to run repeatedly:
-  sn.attenuation(0, 0);
+  // sn.attenuation(0, 0);
+  sn.frequency(0, 100);
+  delay(100);
   sn.frequency(0, 200);
-  delay(200);
+  delay(100);
+  sn.frequency(0, 300);
+  delay(100);
   sn.frequency(0, 400);
-  delay(200);
-  sn.frequency(0, 600);
-  delay(200);
-  sn.frequency(0, 800);
-  delay(200);
+  delay(100);
 }
