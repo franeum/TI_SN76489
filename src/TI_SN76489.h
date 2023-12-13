@@ -26,11 +26,10 @@ public:
                ClockFrequency _FREQUENCY = _4MHz);
 
     void begin();
-    void frequency(uint8_t voice, float freq);
+    int frequency(uint8_t voice, float freq);
     void attenuation(uint8_t voice, uint8_t atten);
 
 private:
-    // uint8_t P0, P1, P2, P3, P4, P5, P6, P7;
     uint8_t PIN_OPS[8];
     uint8_t NOTWE;
     uint8_t CLOCK;
@@ -39,6 +38,7 @@ private:
     inline uint8_t get_reg(uint8_t voice) { return (voice * 2) << 4; }
     void set_clock();
     void send(byte value);
+    void noise(float control);
 };
 
 #endif

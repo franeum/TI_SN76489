@@ -80,10 +80,11 @@ void TI_SN76489::set_clock()
     delay(1000);
 }
 
-void TI_SN76489::frequency(uint8_t voice, float freq)
+int TI_SN76489::frequency(uint8_t voice, float freq)
 {
     byte b1;
     byte b2 = NULL;
+
     uint16_t n = clock_frequency / (32.0 * freq);
 
     Serial.print("clock:\t");
@@ -95,6 +96,12 @@ void TI_SN76489::frequency(uint8_t voice, float freq)
     Serial.print("factor:\t");
     Serial.println(n);
 
+    if (voice == 3)
+    {
+        noise(freq);
+        return 0;
+    }
+
     b1 = 0b10000000 | get_reg(voice) | (n & 0b00001111);
     b2 = (n >> 4) & 0b00111111;
 
@@ -105,13 +112,35 @@ void TI_SN76489::frequency(uint8_t voice, float freq)
 
     send(b1);
     send(b2);
+
+    return 0;
+}
+
+void TI_SN76489::noise(float control)
+{
+    /*  000 (0): periodic high
+        001 (1): periodic medium
+        010 (2): periodic low
+
+        100 (4): white high
+        101 (5): white medium
+        110 (6): white low
+    */
+    uint8_t ctrl = min((uint8_t)control, 6);
+    byte b1 = 0;
+
+    b1 = 0b11100000 | ctrl;
+
+    send(b1);
 }
 
 void TI_SN76489::attenuation(uint8_t voice, uint8_t atten)
 {
     uint8_t b1;
 
-    b1 = 0b10000000 | get_reg(voice) + 16 | 0b1111 & atten;
+    // b1 = 0b10000000 | get_reg(voice) + 16 | 0b1111 & atten;
+    // the same:
+    b1 = 0b10000000 | get_reg(voice) | 0b10000 | 0b1111 & atten;
 
     send(b1);
 }
